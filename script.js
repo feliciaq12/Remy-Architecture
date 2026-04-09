@@ -44,6 +44,138 @@ function setText(id, value) {
   if (el) el.textContent = String(value);
 }
 
+function shortLabel(label, maxLength = 20) {
+  if (!label) return "";
+  return label.length > maxLength ? label.slice(0, maxLength) + "…" : label;
+}
+
+function wrapLabel(label, wordsPerLine = 2) {
+  if (!label) return "";
+  const words = String(label).split(" ");
+  const lines = [];
+  for (let i = 0; i < words.length; i += wordsPerLine) {
+    lines.push(words.slice(i, i + wordsPerLine).join(" "));
+  }
+  return lines;
+}
+
+function makeBarChart(canvasId, labels, data, label, options = {}) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+
+  const {
+    horizontal = false,
+    maxLabelLength = 18
+  } = options;
+
+  return new Chart(canvas, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [
+        {
+          label,
+          data,
+          borderWidth: 1,
+          borderRadius: 8,
+          maxBarThickness: horizontal ? 22 : 42
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      indexAxis: horizontal ? "y" : "x",
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            title: function(items) {
+              return items[0].label;
+            }
+          }
+        }
+      },
+      scales: horizontal
+        ? {
+            x: {
+              beginAtZero: true
+            },
+            y: {
+              ticks: {
+                callback: function(value) {
+                  const label = this.getLabelForValue(value);
+                  return shortLabel(label, maxLabelLength);
+                }
+              }
+            }
+          }
+        : {
+            x: {
+              ticks: {
+                autoSkip: false,
+                maxRotation: 0,
+                minRotation: 0,
+                callback: function(value) {
+                  const label = this.getLabelForValue(value);
+                  return wrapLabel(shortLabel(label, maxLabelLength), 2);
+                }
+              }
+            },
+            y: {
+              beginAtZero: true
+            }
+          }
+    }
+  });
+}
+
+function makeLineChart(canvasId, labels, data, label) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return null;
+
+  return new Chart(canvas, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [
+        {
+          label,
+          data,
+          fill: false,
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 4,
+          pointHoverRadius: 5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: {
+          display: false
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            autoSkip: false
+          }
+        },
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}
+
 function renderTable(rows) {
   const tableBody = document.getElementById("tableBody");
   if (!tableBody) return;
@@ -66,49 +198,6 @@ function renderTable(rows) {
       <td>${e.impact > 0 ? e.impact.toLocaleString() : "—"}</td>
     </tr>
   `).join("");
-}
-
-function makeBarChart(canvasId, labels, data, label) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return null;
-
-  return new Chart(canvas, {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [
-        {
-          label,
-          data,
-          borderWidth: 1,
-          borderRadius: 8,
-          maxBarThickness: 42
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      animation: false,
-      plugins: {
-        legend: {
-          display: false
-        }
-      },
-      scales: {
-        x: {
-          ticks: {
-            autoSkip: false,
-            maxRotation: 0,
-            minRotation: 0
-          }
-        },
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  });
 }
 
 function buildData(events) {
@@ -149,7 +238,6 @@ function buildData(events) {
 
     if (isValid(e.venue)) {
       venueCount[e.venue] = (venueCount[e.venue] || 0) + 1;
-
       if (economicIntensity > 0) {
         economicByVenue[e.venue] = Math.max(economicByVenue[e.venue] || 0, economicIntensity);
       }
@@ -284,14 +372,13 @@ function renderSectorChart(sectorEntries) {
   });
 }
 
-
 function renderMonthCountChart(monthEntries) {
   const canvas = document.getElementById("monthCountChart");
   if (!canvas) return;
 
   if (monthCountChartInstance) monthCountChartInstance.destroy();
 
-  monthCountChartInstance = makeBarChart(
+  monthCountChartInstance = makeLineChart(
     "monthCountChart",
     monthEntries.map(([month]) => month),
     monthEntries.map(([, count]) => count),
@@ -309,7 +396,8 @@ function renderScopeChart(scopeEntries) {
     "scopeChart",
     scopeEntries.map(([k]) => k),
     scopeEntries.map(([, v]) => v),
-    "Events"
+    "Events",
+    { horizontal: false, maxLabelLength: 16 }
   );
 }
 
@@ -323,7 +411,8 @@ function renderVenueChart(venueEntries) {
     "venueChart",
     venueEntries.map(([k]) => k),
     venueEntries.map(([, v]) => v),
-    "Events"
+    "Events",
+    { horizontal: true, maxLabelLength: 26 }
   );
 }
 
@@ -337,7 +426,38 @@ function renderVisitorChart(visitorEntries) {
     "visitorChart",
     visitorEntries.map(([k]) => k),
     visitorEntries.map(([, v]) => v),
-    "Visitor Impact"
+    "Visitor Impact",
+    { horizontal: false, maxLabelLength: 16 }
+  );
+}
+
+function renderEconomicChart(economicEntries) {
+  const canvas = document.getElementById("economicChart");
+  if (!canvas) return;
+
+  if (economicChartInstance) economicChartInstance.destroy();
+
+  economicChartInstance = makeBarChart(
+    "economicChart",
+    economicEntries.map(([k]) => k),
+    economicEntries.map(([, v]) => v),
+    "Economic Intensity",
+    { horizontal: true, maxLabelLength: 26 }
+  );
+}
+
+function renderOpportunityChart(opportunityEvents) {
+  const canvas = document.getElementById("opportunityChart");
+  if (!canvas) return;
+
+  if (opportunityChartInstance) opportunityChartInstance.destroy();
+
+  opportunityChartInstance = makeBarChart(
+    "opportunityChart",
+    opportunityEvents.map((e) => e.title),
+    opportunityEvents.map((e) => e.opportunityScore),
+    "Final Opportunity Score",
+    { horizontal: true, maxLabelLength: 28 }
   );
 }
 
@@ -362,34 +482,6 @@ function renderSearchableTable(enrichedEvents) {
 
     renderTable(filtered);
   });
-}
-
-function renderEconomicChart(economicEntries) {
-  const canvas = document.getElementById("economicChart");
-  if (!canvas) return;
-
-  if (economicChartInstance) economicChartInstance.destroy();
-
-  economicChartInstance = makeBarChart(
-    "economicChart",
-    economicEntries.map(([k]) => k),
-    economicEntries.map(([, v]) => v),
-    "Economic Intensity"
-  );
-}
-
-function renderOpportunityChart(opportunityEvents) {
-  const canvas = document.getElementById("opportunityChart");
-  if (!canvas) return;
-
-  if (opportunityChartInstance) opportunityChartInstance.destroy();
-
-  opportunityChartInstance = makeBarChart(
-    "opportunityChart",
-    opportunityEvents.map((e) => e.title),
-    opportunityEvents.map((e) => e.opportunityScore),
-    "Final Opportunity Score"
-  );
 }
 
 function renderAnalyticsHighlights(thisMonthSummary) {
