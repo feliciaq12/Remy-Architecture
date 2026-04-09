@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suzhou Event Dashboard - Analytics</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-page="analytics">
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <i data-lucide="map-pinned"></i>
+        </div>
+        <div>
+          <h1>Suzhou Event Dashboard</h1>
+          <p>苏州活动数据分析平台</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="topnav">
+    <a href="index.html">Home</a>
+    <a href="analytics.html" class="active">Analytics</a>
+    <a href="data.html">Data</a>
+    <a href="graph.html">Knowledge Graph</a>
+  </nav>
+
+  <main class="container">
+    <section class="insight-grid analytics-month-grid">
+      <div class="card insight-card analytics-summary-card">
+        <div class="insight-head">
+          <h3>This Month Snapshot</h3>
+        </div>
+        <div class="mini-stats two-col-mini">
+          <div>
+            <strong id="monthEventCount">-</strong>
+            <span>Events this month</span>
+          </div>
+          <div>
+            <strong id="monthHotelCount">-</strong>
+            <span>Impacted nearby hotels</span>
+          </div>
+          <div>
+            <strong id="monthVisitorImpact">-</strong>
+            <span>Total visitor impact</span>
+          </div>
+          <div>
+            <strong id="monthVenueLead">-</strong>
+            <span>Main active venue</span>
+          </div>
+          <div>
+            <strong id="monthRestaurantImpact">-</strong>
+            <span>Nearby restaurants linked</span>
+          </div>
+          <div>
+            <strong id="monthStoreImpact">-</strong>
+            <span>Nearby merchants linked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card insight-card">
+        <div class="insight-head">
+          <h3>Hotels Impacted This Month</h3>
+        </div>
+        <ul id="monthlyHotelList" class="insight-list"></ul>
+      </div>
+
+      <div class="card insight-card">
+        <div class="insight-head">
+          <h3>This Month Event Pipeline</h3>
+        </div>
+        <ul id="monthlyEventList" class="insight-list event-list"></ul>
+      </div>
+    </section>
+
+    <section class="charts analytics-main-chart">
+      <div class="chart-card chart-card-wide">
+        <div class="section-head">
+          <h3>Event Count by Month</h3>
+          <p>Monthly distribution of events across the dataset</p>
+        </div>
+        <div class="chart-wrap chart-wrap-compact chart-wrap-main">
+          <canvas id="monthCountChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="charts analytics-chart-grid">
+      <div class="chart-card">
+        <div class="section-head">
+          <h3>Events by Sector</h3>
+        </div>
+        <div class="chart-wrap chart-wrap-compact">
+          <canvas id="sectorChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-head">
+          <h3>Events by Scope</h3>
+        </div>
+        <div class="chart-wrap chart-wrap-compact">
+          <canvas id="scopeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-head">
+          <h3>Venues with Most Events</h3>
+        </div>
+        <div class="chart-wrap chart-wrap-compact chart-wrap-horizontal">
+          <canvas id="venueChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-head">
+          <h3>Visitor Impact by Sector</h3>
+        </div>
+        <div class="chart-wrap chart-wrap-compact">
+          <canvas id="visitorChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-head">
+          <h3>Top Venues by Economic Intensity</h3>
+        </div>
+        <div class="chart-wrap chart-wrap-compact chart-wrap-horizontal">
+          <canvas id="economicChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="section-head">
+          <h3>Highest Opportunity Events</h3>
+        </div>
+        <div class="chart-wrap chart-wrap-compact chart-wrap-horizontal">
+          <canvas id="opportunityChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="charts analytics-notes-grid">
+      <div class="card">
+        <div class="section-head">
+          <h3>Opportunity Insight</h3>
+        </div>
+        <p>
+          Venues with repeated event concentration may represent high-potential
+          areas for hotel partnerships, venue service packages, and district-level
+          visitor support offerings.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <h3>Prototype Recommendation</h3>
+        </div>
+        <p>
+          Prototype recommendation suggests prioritizing periods with historically
+          higher event counts and targeting sectors with larger visitor impact for
+          better commercial returns.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
