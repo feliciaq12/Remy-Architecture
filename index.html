@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remy – Full System Architecture</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-label">RBE404TC — Full System Architecture</div>
+    <h1><span>Remy</span> — Integrated System Map</h1>
+    <p>Three subsystems · Vacuum pick-and-place · External Bluetooth vitals · AI companion interface</p>
+  </div>
+
+  <!-- 3 VERTICAL ZONES -->
+  <div class="zones">
+
+    <!-- ZONE TOP: UI & Control -->
+    <div class="zone zone-top">
+      <div class="zone-header">🔵 ① Top Zone — UI & Interaction</div>
+      <div class="zone-body">
+
+        <div class="node top-node">
+          <div class="node-top"><span class="node-icon">📺</span> Touchscreen Display</div>
+          <div class="node-desc">Angled ~20° surface. Shows medication schedule, vitals dashboard, AI chat UI, and dispensing status.</div>
+          <span class="tag">3.5" TFT · Raspberry Pi</span>
+        </div>
+
+        <div class="node top-node">
+          <div class="node-top"><span class="node-icon">📷</span> Camera Module</div>
+          <div class="node-desc">Mounted in head housing. User identification, gesture detection, and presence sensing.</div>
+          <span class="tag">Pi Camera v2</span>
+        </div>
+
+        <div class="node top-node">
+          <div class="node-top"><span class="node-icon">🎙️</span> Microphone + Speaker</div>
+          <div class="node-desc">Wake-word detection. Two-way voice interaction with Remy AI companion. TTS voice output.</div>
+          <span class="tag">Voice I/O</span>
+        </div>
+
+        <div class="node top-node">
+          <div class="node-top"><span class="node-icon">🤖</span> LLM AI Companion</div>
+          <div class="node-desc">Claude / GPT-style LLM logic. Context-aware conversation using medication history, connected vitals data, user status, and caregiver reporting.</div>
+          <span class="tag tag-teal">Cloud AI</span>
+        </div>
+
+        <div class="node top-node">
+          <div class="node-top"><span class="node-icon">📡</span> External Health Devices</div>
+          <div class="node-desc">Bluetooth-enabled blood pressure monitor and pulse oximeter provide vitals data. Remy receives, displays, and contextualises readings within the AI companion system.</div>
+          <span class="tag tag-green">Bluetooth · BP · Oximeter</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ZONE MID: Dispensing Mechanism -->
+    <div class="zone zone-mid">
+      <div class="zone-header">🟣 ② Middle Zone — Robotic Dispensing</div>
+      <div class="zone-body">
+
+        <div class="node mid-node">
+          <div class="node-top"><span class="node-icon">⚙️</span> Stepper Motor (Top Plate)</div>
+          <div class="node-desc">Drives lead screw for Z-axis actuation. Also drives carousel rotation via separate motor/bearing. Controlled by Raspberry Pi via motor driver.</div>
+          <span class="tag">NEMA 17 Stepper</span>
+        </div>
+
+        <div class="node mid-node">
+          <div class="node-top"><span class="node-icon">🔩</span> Lead Screw + Guide Rods (×2)</div>
+          <div class="node-desc">Converts motor rotation to vertical carriage motion. Twin guide rods prevent wobble. Provides precise Z-axis positioning.</div>
+          <span class="tag">Z-axis Actuator</span>
+        </div>
+
+        <div class="node mid-node">
+          <div class="node-top"><span class="node-icon">🧲</span> Moving Carriage Block</div>
+          <div class="node-desc">Slides on guide rods. Holds vacuum fitting and nozzle. Offset ~60mm from center to align with pill pickup pocket in each bin.</div>
+          <span class="tag tag-rose">Key Innovation</span>
+        </div>
+
+        <div class="node mid-node">
+          <div class="node-top"><span class="node-icon">💨</span> Vacuum Nozzle (End Effector)</div>
+          <div class="node-desc">Silicone-tipped conical nozzle. Gentle grip on pills. Connected via flexible silicone tubing routed along Z-axis carriage.</div>
+          <span class="tag">End Effector</span>
+        </div>
+
+        <div class="node mid-node">
+          <div class="node-top"><span class="node-icon">🌀</span> Vacuum Pump</div>
+          <div class="node-desc">Base-mounted. Generates −60 to −80 kPa suction. ON during pill pickup, OFF to release. Controlled via relay from Raspberry Pi.</div>
+          <span class="tag">−60~−80 kPa</span>
+        </div>
+
+        <div class="node mid-node">
+          <div class="node-top"><span class="node-icon">🍩</span> Rotating Carousel (Donut)</div>
+          <div class="node-desc">8 sectors: 7 medication bins + 1 drop/funnel sector. Rotates in 45° indexed increments. Center hub on bearing system.</div>
+          <span class="tag">Indexed · 45° steps</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ZONE BOT: Storage & Delivery -->
+    <div class="zone zone-bot">
+      <div class="zone-header">🟠 ③ Lower Zone — Storage & Delivery</div>
+      <div class="zone-body">
+
+        <div class="node bot-node">
+          <div class="node-top"><span class="node-icon">📦</span> Wedge-Shaped Medication Bins (×7)</div>
+          <div class="node-desc">Removable, slide out radially via side door. Sloped walls + funnel-like base guide pills to pickup pocket at inner radius.</div>
+          <span class="tag">Removable · Radial</span>
+        </div>
+
+        <div class="node bot-node">
+          <div class="node-top"><span class="node-icon">🚪</span> Side Service Door</div>
+          <div class="node-desc">Curved panel. Opens only when target bin is aligned. Enables single-bin access during guided user loading. Prevents accidental access.</div>
+          <span class="tag tag-amber">User Safety</span>
+        </div>
+
+        <div class="node bot-node">
+          <div class="node-top"><span class="node-icon">🔽</span> Drop / Funnel Sector</div>
+          <div class="node-desc">Dedicated 8th carousel sector. No bin. Receives released pill from nozzle. Guides pill downward to dispensing tray.</div>
+          <span class="tag">Delivery Path</span>
+        </div>
+
+        <div class="node bot-node">
+          <div class="node-top"><span class="node-icon">🥄</span> Dispensing Tray / Cup</div>
+          <div class="node-desc">Receives pill from funnel. User collects here. Accessible from front of Remy. LED illuminates when pill is dispensed.</div>
+          <span class="tag tag-green">User Output</span>
+        </div>
+
+        <div class="node bot-node">
+          <div class="node-top"><span class="node-icon">🔌</span> Power + Electronics Base</div>
+          <div class="node-desc">Raspberry Pi 4, Bluetooth receiver/module, motor drivers, power management, vacuum pump relay, airflow intake. Cables routed along inner walls.</div>
+          <span class="tag">Raspberry Pi 4</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- KEY INNOVATION CALLOUT -->
+  <div class="innovation">
+    <div class="innovation-icon">⭐</div>
+    <div class="innovation-content">
+      <div class="innovation-label">Key Innovation</div>
+      <div class="innovation-title">Offset Vacuum Pick-and-Place System</div>
+      <div class="innovation-desc">
+        Unlike conventional pill dispensers that rely on gravity/drum rotation, Remy uses a <strong style="color:#92400e">top-mounted Z-axis vacuum end effector offset ~60mm from the rotation centre</strong>. This offset precisely aligns with the pill pickup pocket at each bin's inner radius. As the carousel indexes, each bin's pocket rotates under the nozzle — enabling reliable, single-pill pick-and-place regardless of pill shape or size. This is mechanically superior to drum dispensers which suffer from multi-pill release and jamming.
+      </div>
+    </div>
+  </div>
+
+  <!-- MECHANISM OPERATION FLOWS -->
+  <div class="mech-section">
+    <div class="mech-title">▸ Mechanism Operation Sequences</div>
+    <div class="mech-grid">
+
+      <!-- DISPENSING -->
+      <div class="mech-card">
+        <div class="mech-card-header" style="color:#a855f7">💊 Dispensing Sequence</div>
+        <div class="mech-steps">
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">1</div>
+            RTC triggers scheduled dose
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">2</div>
+            Carousel rotates → correct bin aligns under nozzle
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">3</div>
+            Carriage descends via lead screw
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">4</div>
+            Vacuum ON → nozzle picks pill
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">5</div>
+            Carriage lifts with pill attached
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">6</div>
+            Carousel rotates → drop sector aligns
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">7</div>
+            Vacuum OFF → pill drops into funnel
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(168,85,247,0.2);color:#a855f7">8</div>
+            Pill guided to dispensing tray
+          </div>
+        </div>
+      </div>
+
+      <!-- LOADING -->
+      <div class="mech-card">
+        <div class="mech-card-header" style="color:#f59e0b">🔄 User Loading Sequence</div>
+        <div class="mech-steps">
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">1</div>
+            User initiates loading mode via screen
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">2</div>
+            Carousel rotates → Bin 1 aligns with side door
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">3</div>
+            Side door unlocks and opens
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">4</div>
+            User pulls bin radially outward
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">5</div>
+            User fills medication into bin
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">6</div>
+            Bin reinserted → door closes
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">7</div>
+            System auto-advances to next bin
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(245,158,11,0.2);color:#f59e0b">8</div>
+            Repeat until all 7 bins loaded
+          </div>
+        </div>
+      </div>
+
+      <!-- VITALS CHECK -->
+      <div class="mech-card">
+        <div class="mech-card-header" style="color:#f43f5e">❤️ Vitals Check Flow</div>
+        <div class="mech-steps">
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(244,63,94,0.2);color:#f43f5e">1</div>
+            Remy prompts user to use connected health device
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(244,63,94,0.2);color:#f43f5e">2</div>
+            External BP monitor / pulse oximeter measures vitals
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(244,63,94,0.2);color:#f43f5e">3</div>
+            Vitals data sent to Raspberry Pi via Bluetooth
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(244,63,94,0.2);color:#f43f5e">4</div>
+            Raspberry Pi parses data and checks thresholds/baseline
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(244,63,94,0.2);color:#f43f5e">5</div>
+            Normal → Remy confirms + logs reading
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(244,63,94,0.2);color:#f43f5e">6</div>
+            Anomaly → alert + caregiver notification sent
+          </div>
+        </div>
+      </div>
+
+      <!-- AI INTERACTION -->
+      <div class="mech-card">
+        <div class="mech-card-header" style="color:#3b82f6">🤖 AI Interaction Flow</div>
+        <div class="mech-steps">
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(59,130,246,0.2);color:#3b82f6">1</div>
+            Wake word detected by mic
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(59,130,246,0.2);color:#3b82f6">2</div>
+            Whisper STT converts voice → text
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(59,130,246,0.2);color:#3b82f6">3</div>
+            Context injected: connected vitals + med history + time
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(59,130,246,0.2);color:#3b82f6">4</div>
+            LLM API called with full context
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(59,130,246,0.2);color:#3b82f6">5</div>
+            Response generated + Piper TTS speaks aloud
+          </div>
+          <div class="mech-step">
+            <div class="step-num" style="background:rgba(59,130,246,0.2);color:#3b82f6">6</div>
+            Daily summary generated → caregiver app
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FULL SYSTEM FLOW -->
+  <div class="flow-banner">
+    <div class="flow-title">▸ Full System Data & Signal Flow</div>
+    <div class="flow-row">
+      <div class="flow-node" style="background:#dbeafe;border:1px solid #93c5fd;color:#1d4ed8">🕐 RTC Trigger</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#ede9fe;border:1px solid #c4b5fd;color:#5b21b6">🍩 Carousel Index</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#ede9fe;border:1px solid #c4b5fd;color:#5b21b6">🔩 Z-axis Descend</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#ede9fe;border:1px solid #c4b5fd;color:#5b21b6">💨 Vacuum ON</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#ede9fe;border:1px solid #c4b5fd;color:#5b21b6">⬆️ Lift Pill</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#ffedd5;border:1px solid #fdba74;color:#c2410c">🔽 Drop Sector</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#dcfce7;border:1px solid #86efac;color:#15803d">🥄 Dispensing Tray</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#dbeafe;border:1px solid #93c5fd;color:#1d4ed8">🤖 Remy Notifies User</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#fce7f3;border:1px solid #f9a8d4;color:#be185d">❤️ Vitals Check</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#fce7f3;border:1px solid #f9a8d4;color:#be185d">📡 Bluetooth Devices</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#dbeafe;border:1px solid #93c5fd;color:#1d4ed8">🧠 Remy Processing</div>
+      <span class="flow-arrow-small">→</span>
+      <div class="flow-node" style="background:#ccfbf1;border:1px solid #5eead4;color:#0f766e">📲 Caregiver Log</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div>UI / Control (Top Zone)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>Robotic Dispensing (Mid Zone)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f97316"></div>Storage & Delivery (Lower Zone)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div>User Output</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f43f5e"></div>External Vitals / Alert Path</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#14b8a6"></div>Caregiver / Cloud</div>
+    </div>
+  </div>
+
+</div>
+<script src="script.js"></script>
+</body>
+</html>
